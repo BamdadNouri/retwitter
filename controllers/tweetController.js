@@ -6,7 +6,10 @@ const utility = require('../services/utility')
 const mongoose = require('mongoose')
 
 
-exports.new = async(req, res) => {
+class TweetController{
+
+
+async newTweet(req, res){
     try{
 
     const {error} = validationService('newTweet', req.body)
@@ -35,7 +38,7 @@ exports.new = async(req, res) => {
 }
 
 
-exports.delete = async(req, res) => {
+async delete (req, res){
     try{
 
     var checkAccess = await dm.checkUserAccess(req.params.tweetId, req.user.id)
@@ -52,7 +55,7 @@ exports.delete = async(req, res) => {
 }
 
 
-exports.like = async(req, res) => {
+async like (req, res){
     try{
 
     var checkTweet = await dm.checkUserAccess(req.params.tweetId, req.params.userId)
@@ -71,7 +74,7 @@ exports.like = async(req, res) => {
 }
 
 
-exports.retweet = async(req, res) => {
+async retweet(req, res){
     try{
 
     var checkTweet = await dm.checkUserAccess(req.params.tweetId, req.params.userId)
@@ -99,7 +102,7 @@ exports.retweet = async(req, res) => {
 }
 
 
-exports.timeline = async(req, res) => {
+async timeline (req, res){
     try{
 
     var followings = await dm.queryFollowings(req.user.id)
@@ -116,9 +119,14 @@ exports.timeline = async(req, res) => {
         res.status(500).send(err)
     }
 }
+}
+
+module.exports = new TweetController()
 
 
 
+
+/*
 const cassandra = require('cassandra-driver')
 var db = {
     contactPoints: ['127.0.0.1'],
@@ -151,3 +159,4 @@ exports.getTags = (req, res) => {
     })
 }
 
+*/
