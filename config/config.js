@@ -8,8 +8,8 @@ const config = {
         dbIp: '127.0.0.1',
     },
     mail:{
-        address: 'bmddtest@gmail.com',
-        pass: 'dbdmrs77',
+        address: 'XXXX',
+        pass: 'XXX',
     },
     jwt:{
         key: 'twitter2key',
