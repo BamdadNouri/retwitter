@@ -117,7 +117,7 @@ connection.connect(function(err, result){
     if(err){
         console.log(`ERROR connecting to cassandra. \n${err}`)
     }else{
-        console.log('Cassandra users connection works fine.')
+        console.log('FINE but not necessary.')
     }
 })
 

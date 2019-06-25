@@ -17,15 +17,11 @@ connection.connect(function(err, result){
     if(err){
         console.log(`ERROR connecting to cassandra. \n${err}`)
     }else{
-        console.log('Cassandra connection works fine.')
+        console.log('FINE but not necessary.')
     }
 })
 
-console.log('.....')
-console.log(connection.execute)
 app.use('/user', user)
 app.use('/tweet', tweet)
 
 app.listen(config.development.port, () => console.log(`App running on port ${config.development.port}.`))
-
-module.exports = connection;

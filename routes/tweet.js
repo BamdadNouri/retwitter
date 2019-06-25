@@ -4,15 +4,11 @@ const tweetController = require('../controllers/tweetController')
 
 const router = express.Router()
 
-router.post('/new', auth, tweetController.new)
-
-router.post('/reply/:pointTo', auth, tweetController.reply)
+router.post('/new/:pointTo?', auth, tweetController.new)
 
 router.delete('/delete/:tweetId', auth, tweetController.delete)
 
-router.post('/like/:tweetId/:userId', auth, tweetController.like)
-
-router.post('/unlike/:tweetId/:userId', auth, tweetController.unlike)
+router.post('/like/:tweetId/:userId/:unlike?', auth, tweetController.like)
 
 router.post('/retweet/:tweetId/:userId', auth, tweetController.retweet)
 
