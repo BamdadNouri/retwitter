@@ -218,13 +218,12 @@ exports.timeline = (req, res) => {
 
 
 
-exports.getTweets = (req, res) => {
+exports.getTweets = async(req, res) => {
 
     var select = 'SELECT * from tweets;'
-    connection.execute(select, (err, rows) => {
-        console.log(rows.rows.length)
+    var rows = await connection.execute(select)
+    console.log(rows.rows.length)
         res.json(rows.rows)
-        })
 }
 
 exports.getTags = (req, res) => {

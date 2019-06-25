@@ -21,9 +21,11 @@ connection.connect(function(err, result){
     }
 })
 
-
+console.log('.....')
+console.log(connection.execute)
 app.use('/user', user)
 app.use('/tweet', tweet)
 
 app.listen(config.development.port, () => console.log(`App running on port ${config.development.port}.`))
 
+module.exports = connection;
