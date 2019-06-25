@@ -2,8 +2,7 @@ const bcrypt = require('bcrypt')
 const validationService = require('../services/validate')
 const userToken = require('../services/userToken')
 const mailService = require('../services/mail')
-const dm = require('../models/dataModel')
-
+const userData = require('../models/user')
 
 class UserController {
 
@@ -13,13 +12,13 @@ async register(req, res){
     const {error} = validationService('registerUser', req.body)
     if(error) return res.status(400).send(error.details[0].message)
     
-    var checkUser = await dm.checkUserExistance(req.body.id)
+    var checkUser = await userData.checkUserExistance(req.body.id)
     if(checkUser) return res.status(409).send('This id is taken!')
     
     const salt = await bcrypt.genSalt(10)
     var hashedPass = await bcrypt.hash(req.body.password, salt)
     
-    var t = await dm.addUserToDB({id: req.body.id,
+    var t = await userData.addUserToDB({id: req.body.id,
                                 username: req.body.username,
                                 hashedPassword: hashedPass,
                                 email: req.body.email,
@@ -44,7 +43,7 @@ async login(req, res){
     const {error} = validationService('loginUser', req.body)
     if(error) return res.status(400).send(error.details[0].message)
 
-    var checkUser = await dm.checkUserExistance(req.body.id)
+    var checkUser = await userData.checkUserExistance(req.body.id)
     if(!checkUser) return res.status(404).send('No user found with this id!')
 
     const validatePassword = await bcrypt.compare(req.body.password, checkUser.rows[0].password)
@@ -63,13 +62,13 @@ async login(req, res){
 async follow(req, res){
     try{
 
-    var checkUser = await dm.checkUserExistance(req.params.userId)
+    var checkUser = await userData.checkUserExistance(req.params.userId)
     if(!checkUser) return res.status(404).send('UserNout found!')
 
-    dm.handleFollowing(req.params.userId, req.user.id, '+')
+    userData.handleFollowing(req.params.userId, req.user.id, '+')
     .catch((error) => {return res.status(400).send('ERROR ' + error)})
 
-    dm.handleFollower(req.params.userId, req.user.id, '+')
+    userData.handleFollower(req.params.userId, req.user.id, '+')
     .catch((error) => {return res.status(400).send('ERROR ' + error)})
 
     res.status(200).send('Followed :)')
@@ -83,17 +82,17 @@ async follow(req, res){
 async unfollow(req, res){
     try{
 
-    var checkUser = await dm.checkUserExistance(req.params.userId)
+    var checkUser = await userData.checkUserExistance(req.params.userId)
     if(!checkUser) return res.status(404).send('User not found!')
 
     if(checkUser.rows[0].followers == null || !checkUser.rows[0].followers.includes(req.user.id)){
         return res.status(400).send("You're not following this user!")
     }
 
-    dm.handleFollowing(req.params.userId, req.user.id, '-')
+    userData.handleFollowing(req.params.userId, req.user.id, '-')
     .catch((error) => {return res.status(400).send('ERROR ' + error)})
 
-    dm.handleFollower(req.params.userId, req.user.id, '-')
+    userData.handleFollower(req.params.userId, req.user.id, '-')
     .catch((error) => {return res.status(400).send('ERROR ' + error)})
 
     res.status(200).send('Unfollowed!')

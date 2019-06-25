@@ -1,6 +1,7 @@
 
 const validationService = require('../services/validate')
-const dm = require('../models/dataModel')
+const userData = require('../models/user')
+const tweetData = require('../models/tweet')
 const utility = require('../services/utility')
 
 const mongoose = require('mongoose')
@@ -19,7 +20,7 @@ async newTweet(req, res){
     const timeStamp = new Date().toISOString()
 
 
-    dm.newTweet({
+    tweetData.newTweet({
         tId: tId,
         userId: req.user.id,
         body: req.body.body,
@@ -41,10 +42,10 @@ async newTweet(req, res){
 async delete (req, res){
     try{
 
-    var checkAccess = await dm.checkUserAccess(req.params.tweetId, req.user.id)
+    var checkAccess = await userData.checkUserAccess(req.params.tweetId, req.user.id)
     if(!checkAccess) return res.status(401).send('Unauthorized!')
 
-    dm.removeTweet(req.params.tweetId, req.user.id)
+    tweetData.removeTweet(req.params.tweetId, req.user.id)
     .catch((error) => {return res.status(400).sned('ERROR ' + error)})
 
     res.status(200).send('Tweet deleted!')
@@ -58,12 +59,12 @@ async delete (req, res){
 async like (req, res){
     try{
 
-    var checkTweet = await dm.checkUserAccess(req.params.tweetId, req.params.userId)
+    var checkTweet = await userData.checkUserAccess(req.params.tweetId, req.params.userId)
     if(!checkTweet) return res.status(404).send('Invalid tweet!')
 
     var action = req.params.unlike ? '-' : '+'
 
-    dm.handleLikes(req.params.tweetId, req.params.userId, req.user.id, action)
+    tweetData.handleLikes(req.params.tweetId, req.params.userId, req.user.id, action)
     .catch((error) => {return res.status(400).send('ERROR '+ error)})
 
     res.status(200).send(req.params.unlike ? 'Unliked!' : 'Liked!')
@@ -77,13 +78,13 @@ async like (req, res){
 async retweet(req, res){
     try{
 
-    var checkTweet = await dm.checkUserAccess(req.params.tweetId, req.params.userId)
+    var checkTweet = await userData.checkUserAccess(req.params.tweetId, req.params.userId)
     if(!checkTweet) return res.status(404).send('Invalid tweet!')
 
     const timeStamp = new Date().toISOString()
     var tId = (mongoose.Types.ObjectId()).toString()
 
-    dm.newTweet({
+    tweetData.newTweet({
         tId: tId,
         userId: req.user.id,
         body: checkTweet.rows[0].body,
@@ -105,9 +106,9 @@ async retweet(req, res){
 async timeline (req, res){
     try{
 
-    var followings = await dm.queryFollowings(req.user.id)
+    var followings = await tweetData.queryFollowings(req.user.id)
 
-    var timeline = await dm.createTimeline(followings)
+    var timeline = await tweetData.createTimeline(followings)
 
     res.status(200).send(timeline.rows.sort((a, b) => {
         if(a.tstamp > b.tstamp) return -1

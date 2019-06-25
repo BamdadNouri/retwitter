@@ -1,4 +1,4 @@
-const dm = require('../models/dataModel')
+const tweetData = require('../models/tweet')
 
 exports.handlehashtag = async(body, tweetId) => {
     var regex = /(?:^|\s)(?:#)([a-zA-Z\d]+)/gm
@@ -10,6 +10,6 @@ exports.handlehashtag = async(body, tweetId) => {
     }
 
     return await Promise.all(matches.map((tagN) => {
-        dm.hashtagHandler(tagN, tweetId)
+        tweetData.hashtagHandler(tagN, tweetId)
     }))
 }
