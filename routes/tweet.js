@@ -18,7 +18,6 @@ router.post('/retweet/:tweetId/:userId', auth, tweetController.retweet)
 
 router.get('/timeline', auth, tweetController.timeline)
 
-router.get('/hashtag/:tag', auth, tweetController.hashtag)
 
 
 router.get('/all', tweetController.getTweets)

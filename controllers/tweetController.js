@@ -198,7 +198,12 @@ exports.timeline = (req, res) => {
         connection.execute(select, (err, selectRows) => {
             if(!err){
 
-                return res.status(200).send(selectRows.rows)
+                return res.status(200).send(selectRows.rows.sort((x, y) => {
+                    //return x.tstamp - y.tstamp
+                    if(x.tstamp > y.tstamp) return -1
+                    if(x.tstamp < y.tstamp) return 1
+                    return 0
+                }))
             }else{
                 return res.status(400).send(err)
             }
@@ -210,30 +215,6 @@ exports.timeline = (req, res) => {
     }
 }
 
-
-exports.hashtag = (req, res) => {
-    try{
-
-    var select = 'SELECT * from hashtags WHERE tagname=?;'
-    connection.execute(select, [req.params.tag], (err, rows) => {
-        if(rows.rows.length != 0){
-            var i = rows.rows[0].tweetid
-            var ii = rows.rows[1].tweetid
-            var getTweets = `SELECT * from tweets WHERE id IN ('${i}', '${ii}') ALLOW FILTERING;`
-            console.log(getTweets)
-            connection.execute(getTweets, (err, rowss) => {
-                console.log('err -> ' + err)
-                console.log('rows -> ' + rowss.rows)
-            })
-        }else{
-            return res.status(404).send('No tweet found with this hashtag.')
-        }
-    })
-
-    }catch(err){
-        res.status(500).send(err)
-    }
-}
 
 
 
