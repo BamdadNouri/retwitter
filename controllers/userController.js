@@ -5,37 +5,40 @@ const mailService = require('../services/mail')
 const dm = require('../models/dataModel')
 
 
-exports.register = async(req, res) => {
+class UserController {
+
+
+async register(req, res){
     try{
     const {error} = validationService('registerUser', req.body)
     if(error) return res.status(400).send(error.details[0].message)
-
+    
     var checkUser = await dm.checkUserExistance(req.body.id)
     if(checkUser) return res.status(409).send('This id is taken!')
-
+    
     const salt = await bcrypt.genSalt(10)
     var hashedPass = await bcrypt.hash(req.body.password, salt)
-
+    
     var t = await dm.addUserToDB({id: req.body.id,
                                 username: req.body.username,
                                 hashedPassword: hashedPass,
                                 email: req.body.email,
                                 bio: 'Some placeholder bio.'})
     .catch((err) => {return res.status(400).send(err)})
-
+    
     //mailService('userWelcome', {email: req.body.email})
-        
+            
     const token = userToken.generateAuthToken(req.body.id)
-        
+            
     res.status(200).send(token)                     
-
+    
     }catch(err){
         res.status(500).send(err)
     }
 }
 
 
-exports.login = async (req, res) => {
+async login(req, res){
     try{
 
     const {error} = validationService('loginUser', req.body)
@@ -57,7 +60,7 @@ exports.login = async (req, res) => {
 }
 
 
-exports.follow = async(req, res) => {
+async follow(req, res){
     try{
 
     var checkUser = await dm.checkUserExistance(req.params.userId)
@@ -77,7 +80,7 @@ exports.follow = async(req, res) => {
 }
 
 
-exports.unfollow = async(req, res) => {
+async unfollow(req, res){
     try{
 
     var checkUser = await dm.checkUserExistance(req.params.userId)
@@ -100,11 +103,14 @@ exports.unfollow = async(req, res) => {
     }
 }
 
+} 
+
+module.exports = new UserController()
 
 
 
 
-
+/*
 const cassandra = require('cassandra-driver')
 
 var db = {
@@ -134,4 +140,4 @@ exports.all = async(req, res) => {
         res.status(500).send(err)
     }
 }
-
+*/

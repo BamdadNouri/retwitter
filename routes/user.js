@@ -12,7 +12,6 @@ router.post('/follow/:userId', auth, userController.follow)
 
 router.post('/unfollow/:userId', auth, userController.unfollow)
 
-router.get('/all', userController.all)
+//router.get('/all', userController.all)
 
 module.exports = router
-
