@@ -7,6 +7,7 @@ First, make sure you have cassandra working on your machine. (if not, you can us
 ```
 npm i
 ```
+## Usage
 ```
 node app.js
 ```
