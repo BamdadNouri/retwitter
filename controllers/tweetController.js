@@ -211,6 +211,32 @@ exports.timeline = (req, res) => {
 }
 
 
+exports.hashtag = (req, res) => {
+    try{
+
+    var select = 'SELECT * from hashtags WHERE tagname=?;'
+    connection.execute(select, [req.params.tag], (err, rows) => {
+        if(rows.rows.length != 0){
+            var i = rows.rows[0].tweetid
+            var ii = rows.rows[1].tweetid
+            var getTweets = `SELECT * from tweets WHERE id IN ('${i}', '${ii}') ALLOW FILTERING;`
+            console.log(getTweets)
+            connection.execute(getTweets, (err, rowss) => {
+                console.log('err -> ' + err)
+                console.log('rows -> ' + rowss.rows)
+            })
+        }else{
+            return res.status(404).send('No tweet found with this hashtag.')
+        }
+    })
+
+    }catch(err){
+        res.status(500).send(err)
+    }
+}
+
+
+
 exports.getTweets = (req, res) => {
 
     var select = 'SELECT * from tweets;'
